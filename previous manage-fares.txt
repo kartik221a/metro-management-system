@@ -1,0 +1,269 @@
+"use client";
+
+import { useState, useEffect, ChangeEvent } from "react";
+import { firestore } from "@/firebase/firebase";
+import { collection, addDoc, getDocs, updateDoc, doc, deleteDoc } from "firebase/firestore";
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card"; 
+import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select"; 
+import { Label } from "@/components/ui/label";
+import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover"; 
+
+const ManageFares = () => {
+    const [fares, setFares] = useState<any[]>([]);  // Type set to any, you can replace it with a specific type if needed
+    const [stations, setStations] = useState<string[]>([]); // Stations are a list of strings
+    const [newFare, setNewFare] = useState({ fromStation: "", toStation: "", fareAmount: "" });
+    const [editFare, setEditFare] = useState({ id: "", fromStation: "", toStation: "", fareAmount: "" });
+    const [loading, setLoading] = useState(false);
+
+    // Fetch fares from Firestore
+    const fetchFares = async () => {
+        const faresCollection = collection(firestore, "fares");
+        const querySnapshot = await getDocs(faresCollection);
+        const fetchedFares = querySnapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data(),
+        }));
+        setFares(fetchedFares);
+    };
+
+    // Fetch stations from Firestore and sort them alphabetically
+    const fetchStations = async () => {
+        const stationsCollection = collection(firestore, "stations");
+        const querySnapshot = await getDocs(stationsCollection);
+        const fetchedStations = querySnapshot.docs
+            .map(doc => doc.data().stationName) // Fetch stationName field
+            .sort(); // Sort stations alphabetically
+        setStations(fetchedStations);
+    };
+
+    // Handle Add Fare
+    const handleAddFare = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setLoading(true);
+        try {
+            await addDoc(collection(firestore, "fares"), newFare);
+            setNewFare({ fromStation: "", toStation: "", fareAmount: "" });
+            fetchFares(); // Refresh fare list
+        } catch (error) {
+            console.error("Error adding fare: ", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Handle Edit Fare
+    const handleEditFare = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setLoading(true);
+        try {
+            const fareDocRef = doc(firestore, "fares", editFare.id);
+            await updateDoc(fareDocRef, {
+                fromStation: editFare.fromStation,
+                toStation: editFare.toStation,
+                fareAmount: editFare.fareAmount,
+            });
+            setEditFare({ id: "", fromStation: "", toStation: "", fareAmount: "" });
+            fetchFares(); // Refresh fare list
+        } catch (error) {
+            console.error("Error updating fare: ", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Handle Delete Fare
+    const handleDeleteFare = async (id: string) => {
+        setLoading(true);
+        try {
+            await deleteDoc(doc(firestore, "fares", id));
+            fetchFares(); // Refresh fare list
+        } catch (error) {
+            console.error("Error deleting fare: ", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Handle onChange for Select Elements
+    const handleSelectChange = (
+        e: ChangeEvent<HTMLSelectElement>,
+        field: "fromStation" | "toStation" | "fareAmount",
+        setter: React.Dispatch<React.SetStateAction<any>>
+    ) => {
+        setter((prevState: any) => ({
+            ...prevState,
+            [field]: e.target.value,
+        }));
+    };
+
+    // Handle input change for Fare Amount
+    const handleInputChange = (e: ChangeEvent<HTMLInputElement>, field: "fareAmount", setter: React.Dispatch<React.SetStateAction<any>>) => {
+        setter((prevState: any) => ({
+            ...prevState,
+            [field]: e.target.value,
+        }));
+    };
+
+    useEffect(() => {
+        fetchFares(); // Initial fetch of fares
+        fetchStations(); // Initial fetch of stations
+    }, []);
+
+    return (
+        <div className="p-6">
+            {/* Add Fare Form */}
+            <div className="mb-6">
+                <h2 className="text-2xl font-semibold mb-4">Add New Fare</h2>
+                <form onSubmit={handleAddFare} className="space-y-4">
+                    <div className="flex flex-col">
+                        <Label htmlFor="fromStation">From Station</Label>
+                        <Select
+                            id="fromStation"
+                            value={newFare.fromStation}
+                            onChange={(e) => handleSelectChange(e, "fromStation", setNewFare)}
+                            required
+                        >
+                            <SelectTrigger>
+                                {newFare.fromStation || "Select From Station"}
+                            </SelectTrigger>
+                            <SelectContent>
+                                {stations.map((station, index) => (
+                                    <SelectItem key={index} value={station}>
+                                        {station}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </div>
+                    <div className="flex flex-col">
+                        <Label htmlFor="toStation">To Station</Label>
+                        <Select
+                            id="toStation"
+                            value={newFare.toStation}
+                            onChange={(e) => handleSelectChange(e, "toStation", setNewFare)}
+                            required
+                        >
+                            <SelectTrigger>
+                                {newFare.toStation || "Select To Station"}
+                            </SelectTrigger>
+                            <SelectContent>
+                                {stations.map((station, index) => (
+                                    <SelectItem key={index} value={station}>
+                                        {station}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </div>
+                    <div className="flex flex-col">
+                        <Label htmlFor="fareAmount">Fare Amount</Label>
+                        <input
+                            type="number"
+                            id="fareAmount"
+                            value={newFare.fareAmount}
+                            onChange={(e) => handleInputChange(e, "fareAmount", setNewFare)}
+                            placeholder="Enter Fare Amount"
+                            required
+                            className="p-2 border rounded-md"
+                        />
+                    </div>
+                    <Button type="submit" className="w-full" disabled={loading}>
+                        {loading ? "Adding..." : "Add Fare"}
+                    </Button>
+                </form>
+            </div>
+
+            {/* Fares List */}
+            <div className="space-y-4">
+                {fares.map((fare) => (
+                    <Card key={fare.id} className="hover:scale-105 transition-transform duration-300 shadow-lg">
+                        <CardHeader>
+                            <CardTitle>{`${fare.fromStation} to ${fare.toStation}`}</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <p>Fare Amount: ₹{fare.fareAmount}</p>
+                            <div className="flex gap-4 mt-4">
+                                {/* Edit Button with Popover */}
+                                <Popover>
+                                    <PopoverTrigger>
+                                        {/* Updated Trigger to show both stations */}
+                                        {editFare.fromStation && editFare.toStation
+                                            ? `From ${editFare.fromStation} to ${editFare.toStation}`
+                                            : "Select Fare to Edit"}
+                                    </PopoverTrigger>
+                                    <PopoverContent>
+                                        <div className="flex flex-col gap-4">
+                                            <div className="flex flex-col">
+                                                <Label htmlFor="editFromStation">From Station</Label>
+                                                <Select
+                                                    id="editFromStation"
+                                                    value={editFare.fromStation}
+                                                    onChange={(e) => handleSelectChange(e, "fromStation", setEditFare)}
+                                                    required
+                                                >
+                                                    <SelectTrigger>
+                                                        {editFare.fromStation || "Select From Station"}
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        {stations.map((station, index) => (
+                                                            <SelectItem key={index} value={station}>
+                                                                {station}
+                                                            </SelectItem>
+                                                        ))}
+                                                    </SelectContent>
+                                                </Select>
+                                            </div>
+                                            <div className="flex flex-col">
+                                                <Label htmlFor="editToStation">To Station</Label>
+                                                <Select
+                                                    id="editToStation"
+                                                    value={editFare.toStation}
+                                                    onChange={(e) => handleSelectChange(e, "toStation", setEditFare)}
+                                                    required
+                                                >
+                                                    <SelectTrigger>
+                                                        {editFare.toStation || "Select To Station"}
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        {stations.map((station, index) => (
+                                                            <SelectItem key={index} value={station}>
+                                                                {station}
+                                                            </SelectItem>
+                                                        ))}
+                                                    </SelectContent>
+                                                </Select>
+                                            </div>
+                                            <div className="flex flex-col">
+                                                <Label htmlFor="editFareAmount">Fare Amount</Label>
+                                                <input
+                                                    type="number"
+                                                    id="editFareAmount"
+                                                    value={editFare.fareAmount}
+                                                    onChange={(e) => handleInputChange(e, "fareAmount", setEditFare)}
+                                                    placeholder="Enter Fare Amount"
+                                                    required
+                                                    className="p-2 border rounded-md"
+                                                />
+                                            </div>
+                                            <Button onClick={handleEditFare} className="w-full mt-4">
+                                                {loading ? "Updating..." : "Update Fare"}
+                                            </Button>
+                                        </div>
+                                    </PopoverContent>
+                                </Popover>
+
+                                {/* Delete Button */}
+                                <Button variant="outline" onClick={() => handleDeleteFare(fare.id)} className="text-red-500">
+                                    Delete
+                                </Button>
+                            </div>
+                        </CardContent>
+                    </Card>
+                ))}
+            </div>
+        </div>
+    );
+};
+
+export default ManageFares;
