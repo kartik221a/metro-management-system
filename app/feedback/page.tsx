@@ -1,100 +1,90 @@
-import React from "react";
+import React from 'react';
+import Image from 'next/image';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import Footer from '@/components/footer';
 
-const FeedbackPage: React.FC = () => {
+const FeedbackPage = () => {
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header Section */}
-      <header className="bg-gradient-to-r from-purple-700 to-purple-500 text-white p-6 shadow-lg">
-        <div className="container mx-auto">
-          <h1 className="text-4xl font-bold">We Value Your Feedback</h1>
-          <p className="text-lg mt-2">
-            Help us improve by sharing your thoughts and experiences.
-          </p>
+    <div className="min-h-screen">
+      {/* Header Banner Section */}
+      <header className="relative w-full h-96">
+        <Image
+          src="https://plus.unsplash.com/premium_photo-1667354154657-5adc088ed55a?q=80&w=1486&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" // Replace with your own image URL
+          alt="Feedback Banner"
+          layout="fill" // Make sure the image fills the container
+          objectFit="cover" // Ensures the image covers the space
+          className="absolute inset-0"
+        />
+        <div className="absolute inset-0 bg-black opacity-50"></div>
+        <div className="relative z-10 flex items-center justify-center text-white text-center w-full h-full">
+          <h1 className="text-4xl font-bold">Feedback</h1>
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="container mx-auto px-4 py-8">
-        {/* Feedback Form Section */}
-        <section className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-2xl font-bold text-purple-700">Your Feedback Matters</h2>
-          <p className="text-gray-700 mt-4">
-            Please fill out the form below to let us know how we can improve our services.
-          </p>
-          <form className="mt-6 space-y-4">
-            <div>
-              <label
-                htmlFor="name"
-                className="block text-gray-700 font-medium mb-1"
-              >
-                Name
-              </label>
-              <input
-                type="text"
-                id="name"
-                className="w-full border border-gray-300 rounded-lg p-2"
-                placeholder="Enter your name"
-              />
-            </div>
-            <div>
-              <label
-                htmlFor="email"
-                className="block text-gray-700 font-medium mb-1"
-              >
-                Email
-              </label>
-              <input
-                type="email"
-                id="email"
-                className="w-full border border-gray-300 rounded-lg p-2"
-                placeholder="Enter your email"
-              />
-            </div>
-            <div>
-              <label
-                htmlFor="feedbackType"
-                className="block text-gray-700 font-medium mb-1"
-              >
-                Type of Feedback
-              </label>
-              <select
-                id="feedbackType"
-                className="w-full border border-gray-300 rounded-lg p-2"
-              >
-                <option value="">Select an option</option>
-                <option value="complaint">Complaint</option>
-                <option value="suggestion">Suggestion</option>
-                <option value="praise">Praise</option>
-              </select>
-            </div>
-            <div>
-              <label
-                htmlFor="message"
-                className="block text-gray-700 font-medium mb-1"
-              >
-                Feedback
-              </label>
-              <textarea
-                id="message"
-                className="w-full border border-gray-300 rounded-lg p-2"
-                rows={4}
-                placeholder="Write your feedback here"
-              ></textarea>
-            </div>
-            <button
-              type="submit"
-              className="bg-purple-600 text-white py-2 px-6 rounded shadow hover:bg-purple-700"
-            >
-              Submit Feedback
-            </button>
-          </form>
-        </section>
-      </main>
+      {/* Main Content Section */}
+      <div className="p-8 bg-gray-100">
+        {/* Feedback Form Card */}
+        <Card className="bg-white shadow-lg">
+          <CardHeader>
+            <CardTitle className="text-xl font-semibold text-center">We Value Your Feedback</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form className="space-y-4">
+              <div className="flex flex-col">
+                <label htmlFor="name" className="text-gray-700">Your Name</label>
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  className="p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"
+                  placeholder="Enter your name"
+                />
+              </div>
+              <div className="flex flex-col">
+                <label htmlFor="email" className="text-gray-700">Email Address</label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  className="p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"
+                  placeholder="Enter your email"
+                />
+              </div>
+              <div className="flex flex-col">
+                <label htmlFor="rating" className="text-gray-700">Rating</label>
+                <select
+                  id="rating"
+                  name="rating"
+                  className="p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"
+                >
+                  <option value="5">5 - Excellent</option>
+                  <option value="4">4 - Good</option>
+                  <option value="3">3 - Average</option>
+                  <option value="2">2 - Poor</option>
+                  <option value="1">1 - Very Poor</option>
+                </select>
+              </div>
+              <div className="flex flex-col">
+                <label htmlFor="message" className="text-gray-700">Your Feedback</label>
+                <textarea
+                  id="message"
+                  name="message"
+                  className="p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"
+                  placeholder="Enter your feedback"
+                ></textarea>
+              </div>
+              <div className="flex justify-center mt-4">
+                <Button className="bg-blue-600 hover:bg-blue-700 w-full">
+                  Submit Feedback
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
 
-      {/* Footer Section */}
-      <footer className="bg-gray-800 text-white text-center py-4">
-        <p>&copy; 2024 Metro Management System. All Rights Reserved.</p>
-      </footer>
+      <Footer />
     </div>
   );
 };

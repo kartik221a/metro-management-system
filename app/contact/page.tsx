@@ -1,101 +1,108 @@
-import React from "react";
+import React from 'react';
+import Image from 'next/image';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import Footer from '@/components/footer';
+import Link from 'next/link';
 
-const ContactPage: React.FC = () => {
+const ContactPage = () => {
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header Section */}
-      <header className="bg-gradient-to-r from-blue-700 to-blue-500 text-white p-6 shadow-lg">
-        <div className="container mx-auto">
+    <div className="min-h-screen">
+      {/* Header Banner Section */}
+      <header className="relative w-full h-96">
+        <Image
+          src="https://plus.unsplash.com/premium_photo-1682125235036-d1ab54136ff4?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" // Replace with your own image URL
+          alt="Contact Us Banner"
+          layout="fill" // Make sure the image fills the container
+          objectFit="cover" // Ensures the image covers the space
+          className="absolute inset-0"
+        />
+        <div className="absolute inset-0 bg-black opacity-50"></div>
+        <div className="relative z-10 flex items-center justify-center text-white text-center w-full h-full">
           <h1 className="text-4xl font-bold">Contact Us</h1>
-          <p className="text-lg mt-2">We are here to assist you with any queries or concerns.</p>
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="container mx-auto px-4 py-8">
-        {/* Contact Info Section */}
-        <section className="bg-white rounded-lg shadow-md p-6 mb-8">
-          <h2 className="text-2xl font-bold text-blue-700">Get in Touch</h2>
-          <p className="text-gray-700 mt-4">
-            For any inquiries, feel free to reach out to us. We're committed to ensuring your
-            metro experience is seamless and enjoyable.
-          </p>
-          <ul className="mt-4 text-gray-700 space-y-2">
-            <li>
-              <strong>Email:</strong> kartik.2426mca664@kiet.edu
-            </li>
-            <li>
-              <strong>Phone:</strong> +91 6397729073
-            </li>
-            <li>
-              <strong>Address:</strong> 123 Metro Lane, NCR, India
-            </li>
-          </ul>
-        </section>
+      {/* Main Content Section */}
+      <div className="p-8 bg-gray-100">
+        {/* Contact Details */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Contact Form Card */}
+          <Card className="bg-white shadow-lg">
+            <CardHeader>
+              <CardTitle className="text-xl font-semibold text-center">Get in Touch</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <form className="space-y-4">
+                <div className="flex flex-col">
+                  <label htmlFor="name" className="text-gray-700">Your Name</label>
+                  <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    className="p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"
+                    placeholder="Enter your name"
+                  />
+                </div>
+                <div className="flex flex-col">
+                  <label htmlFor="email" className="text-gray-700">Email Address</label>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    className="p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"
+                    placeholder="Enter your email"
+                  />
+                </div>
+                <div className="flex flex-col">
+                  <label htmlFor="message" className="text-gray-700">Message</label>
+                  <textarea
+                    id="message"
+                    name="message"
+                    className="p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"
+                    placeholder="Enter your message"
+                  ></textarea>
+                </div>
+                <div className="flex justify-center mt-4">
+                  <Button className="bg-blue-600 hover:bg-blue-700 w-full">
+                    Send Message
+                  </Button>
+                </div>
+              </form>
+            </CardContent>
+          </Card>
 
-        {/* Contact Form Section */}
-        <section className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-2xl font-bold text-blue-700">Send Us a Message</h2>
-          <p className="text-gray-700 mt-4">
-            Fill out the form below, and our team will get back to you as soon as possible.
-          </p>
-          <form className="mt-6 space-y-4">
-            <div>
-              <label
-                htmlFor="name"
-                className="block text-gray-700 font-medium mb-1"
-              >
-                Name
-              </label>
-              <input
-                type="text"
-                id="name"
-                className="w-full border border-gray-300 rounded-lg p-2"
-                placeholder="Enter your name"
-              />
-            </div>
-            <div>
-              <label
-                htmlFor="email"
-                className="block text-gray-700 font-medium mb-1"
-              >
-                Email
-              </label>
-              <input
-                type="email"
-                id="email"
-                className="w-full border border-gray-300 rounded-lg p-2"
-                placeholder="Enter your email"
-              />
-            </div>
-            <div>
-              <label
-                htmlFor="message"
-                className="block text-gray-700 font-medium mb-1"
-              >
-                Message
-              </label>
-              <textarea
-                id="message"
-                className="w-full border border-gray-300 rounded-lg p-2"
-                rows={4}
-                placeholder="Write your message here"
-              ></textarea>
-            </div>
-            <button
-              type="submit"
-              className="bg-blue-600 text-white py-2 px-6 rounded shadow hover:bg-blue-700"
-            >
-              Send Message
-            </button>
-          </form>
-        </section>
-      </main>
+          {/* Contact Info Card */}
+          <Card className="bg-white shadow-lg">
+            <CardHeader>
+              <CardTitle className="text-xl font-semibold text-center">Contact Information</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="flex items-center">
+                  <span className="text-gray-600">📍</span>
+                  <p className="ml-2 text-gray-700">123 Metro City, U.P., India</p>
+                </div>
+                <div className="flex items-center">
+                  <span className="text-gray-600">📧</span>
+                  <p className="ml-2 text-gray-700">kartik.2426mca664@kiet.edu</p>
+                </div>
+                <div className="flex items-center">
+                  <span className="text-gray-600">📞</span>
+                  <p className="ml-2 text-gray-700">+91 6397729073</p>
+                </div>
+                <div className="flex justify-center mt-4">
+                  <Button className="bg-green-600 hover:bg-green-700 w-full">
+                    <Link href="/feedback">Give Feedback</Link>
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
 
-      {/* Footer Section */}
-      <footer className="bg-gray-800 text-white text-center py-4">
-        <p>&copy; 2024 Metro Management System. All Rights Reserved.</p>
-      </footer>
+      <Footer />
     </div>
   );
 };
